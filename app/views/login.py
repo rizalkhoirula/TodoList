@@ -3,14 +3,14 @@
 import tkinter as tk
 from tkinter import messagebox
 import bcrypt
-from app.database import Database
-from app.register import RegisterWindow
+from app.models.database import Database
+from app.views.register import RegisterWindow
 
 
 class LoginWindow:
-    def __init__(self, root, on_login_success=None):
+    def __init__(self, root, on_login_success_callback=None): # Renamed for clarity
         self.root = root
-        self.on_login_success = on_login_success
+        self.on_login_success_callback = on_login_success_callback # Renamed for clarity
         self.root.title("Login")
         self.root.geometry("400x300")
         self.root.resizable(False, False)
@@ -60,10 +60,10 @@ class LoginWindow:
         user = db.get_user_by_username(username)
 
         if user and self.check_password(password, user["password_hash"]):
-            messagebox.showinfo("Success", "Login successful!")
-            self.root.destroy()
-            if self.on_login_success:
-                self.on_login_success(user["id"])
+            # messagebox.showinfo("Success", "Login successful!") # Message can be optional
+            self.root.destroy() # Close login window
+            if self.on_login_success_callback:
+                self.on_login_success_callback(user["id"]) # Call the callback
         else:
             messagebox.showerror("Error", "Invalid username or password.")
 
@@ -75,7 +75,7 @@ class LoginWindow:
         return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
 
 
-def launch_login():
+def launch_login(on_login_success_callback=None): # Accept callback
     root = tk.Tk()
-    LoginWindow(root)
+    LoginWindow(root, on_login_success_callback=on_login_success_callback) # Pass to window
     root.mainloop()

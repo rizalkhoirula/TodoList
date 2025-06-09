@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 import bcrypt
-from app.database import Database
+from app.models.database import Database
 
 
 class RegisterWindow:
